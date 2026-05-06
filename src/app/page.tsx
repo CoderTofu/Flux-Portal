@@ -73,7 +73,7 @@ export default function Home() {
     if (!hasFiles || isUploading || isFileSelectionLocked) return;
     setIsFileSelectionLocked(true);
     setIsUploading(true);
-    const id = nanoid();
+    const id = nanoid(11);
     setGeneratedShareLink(`flux.sh/${id}`);
     selectedFiles.map(async (file: File) => {
       const response = await fetch(`http://localhost:5000/get-upload-link`, {
