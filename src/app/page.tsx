@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useRef, useState } from "react";
+import { nanoid } from "nanoid";
 
 const MAX_SIZE_TEXT = "Maximum file size 2GB";
 const trustItems = [
@@ -52,9 +53,9 @@ export default function Home() {
   const [isUploading, setIsUploading] = useState(false);
   const [isUploaded, setIsUploaded] = useState(false);
   const [isFileSelectionLocked, setIsFileSelectionLocked] = useState(false);
+  const [generatedShareLink, setGeneratedShareLink] = useState("");
 
   const hasFiles = selectedFiles.length > 0;
-  const generatedShareLink = "flux.sh/abc123";
 
   const handleFiles = (files: FileList | null) => {
     if (!files || isFileSelectionLocked) return;
@@ -68,14 +69,35 @@ export default function Home() {
     setSelectedFiles((prev) => prev.filter((_, index) => index !== fileIndex));
   };
 
-  const handleStartUpload = () => {
+  const handleStartUpload = async () => {
     if (!hasFiles || isUploading || isFileSelectionLocked) return;
     setIsFileSelectionLocked(true);
     setIsUploading(true);
-    setTimeout(() => {
+    const id = nanoid();
+    setGeneratedShareLink(`flux.sh/${id}`);
+    selectedFiles.map(async (file: File) => {
+      const response = await fetch(`http://localhost:5000/get-upload-link`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id,
+          filename: file.name,
+          expirationHours,
+          contentType: file.type,
+        }),
+      });
+      const { url } = await response.json();
+      const uploadResponse = await fetch(url, {
+        method: "PUT",
+        body: file,
+        headers: { "Content-Type": file.type },
+      });
+
+      if (uploadResponse.ok) {
+        setIsUploaded(true);
+      }
       setIsUploading(false);
-      setIsUploaded(true);
-    }, 750);
+    });
   };
 
   const handleDrop: React.DragEventHandler<HTMLDivElement> = (event) => {
