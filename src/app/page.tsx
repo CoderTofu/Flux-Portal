@@ -56,6 +56,15 @@ export default function Home() {
   const hasFiles = selectedFiles.length > 0;
   const generatedShareLink = "flux.sh/abc123";
 
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(generatedShareLink);
+      console.log("Link copied!");
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  };
+
   const handleFiles = (files: FileList | null) => {
     if (!files || isFileSelectionLocked) return;
     const incoming = Array.from(files);
@@ -89,7 +98,7 @@ export default function Home() {
     <main className="text-[#1d1326]">
       <div className="mx-auto flex min-h-screen max-w-[1320px] flex-col px-6 pb-5 pt-4 lg:px-10">
         <section className="relative flex-1 py-6 text-center lg:px-10 lg:py-10">
-          <h1 className="font-playfair text-4xl tracking-tight text-[#23172f] md:text-6xl">
+          <h1 className="font-playfair text-4xl text-[#23172f] md:text-6xl">
             Let your files <span className="text-[#8253a7]">flow.</span>
           </h1>
           <p className="mt-3 text-base text-[#4A306D] md:text-[25px] md:leading-8">
@@ -116,11 +125,10 @@ export default function Home() {
                 }}
                 onDragLeave={() => setIsDragging(false)}
                 onDrop={handleDrop}
-                className={`flex min-h-[350px] flex-col items-center justify-center rounded-2xl border-2 border-dashed bg-white/70 px-5 text-center shadow-[0_6px_16px_rgba(60,33,88,0.08)] transition ${
-                  isDragging
-                    ? "border-[#9f59cc] bg-[#f8f1fe]"
-                    : "border-[#c4b8cf]"
-                }`}
+                className={`flex min-h-[350px] flex-col items-center justify-center rounded-2xl border-2 border-dashed bg-white/70 px-5 text-center shadow-[0_6px_16px_rgba(60,33,88,0.08)] transition ${isDragging
+                  ? "border-[#9f59cc] bg-[#f8f1fe]"
+                  : "border-[#c4b8cf]"
+                  }`}
               >
                 <div className="flex h-full flex-col items-center justify-center text-center">
                   <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-[#f4eafb]">
@@ -208,11 +216,10 @@ export default function Home() {
                 }}
                 onDragLeave={() => setIsDragging(false)}
                 onDrop={handleDrop}
-                className={`min-h-[350px] rounded-2xl border-2 border-dashed bg-white/70 px-5 py-6 text-left shadow-[0_6px_16px_rgba(60,33,88,0.08)] transition ${
-                  isDragging
-                    ? "border-[#9f59cc] bg-[#f8f1fe]"
-                    : "border-[#c4b8cf]"
-                }`}
+                className={`min-h-[350px] rounded-2xl border-2 border-dashed bg-white/70 px-5 py-6 text-left shadow-[0_6px_16px_rgba(60,33,88,0.08)] transition ${isDragging
+                  ? "border-[#9f59cc] bg-[#f8f1fe]"
+                  : "border-[#c4b8cf]"
+                  }`}
               >
                 <div className="space-y-4 overflow-y-auto h-100">
                   {selectedFiles.map((file, index) => (
@@ -290,25 +297,26 @@ export default function Home() {
                       onChange={(event) =>
                         setExpirationHours(Number(event.target.value))
                       }
-                      className="w-full accent-[#8f4aba]"
+                      disabled={isUploaded}
+                      className="w-full accent-[#8f4aba] disabled:opacity-50 transition"
                     />
                     <div className="mt-1 flex justify-between text-[10px] uppercase text-[#9a8baa]">
                       <span>1 Hour</span>
                       <span>7 Days</span>
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    disabled={!hasFiles || isUploading}
-                    onClick={handleStartUpload}
-                    className="mt-5 w-full rounded-lg bg-[#8f4aba] px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-[#7f3caa] disabled:cursor-not-allowed disabled:bg-[#c9b8d6]"
-                  >
-                    {isUploading
-                      ? "Uploading..."
-                      : isUploaded
-                        ? "Update Settings"
+                  {!isUploaded && (
+                    <button
+                      type="button"
+                      disabled={!hasFiles || isUploading}
+                      onClick={handleStartUpload}
+                      className="mt-5 w-full rounded-lg bg-[#8f4aba] px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-[#7f3caa] disabled:cursor-not-allowed disabled:bg-[#c9b8d6]"
+                    >
+                      {isUploading
+                        ? "Uploading..."
                         : "Upload"}
-                  </button>
+                    </button>
+                  )} 
                 </article>
 
                 {isUploaded && (
@@ -320,6 +328,7 @@ export default function Home() {
                       <button
                         type="button"
                         className="rounded-full bg-[#8f4aba] px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition hover:bg-[#7f3caa]"
+                        onClick={copyLink}
                       >
                         Copy Link
                       </button>
@@ -334,9 +343,9 @@ export default function Home() {
         <footer className="mt-6 flex flex-wrap items-center justify-between gap-3 text-xs text-[#8a7a99]">
           <p>© 2026 FLUX. ALL RIGHTS RESERVED</p>
           <div className="flex gap-6 uppercase tracking-wider">
-            <span>Terms</span>
+            {/* <span>Terms</span>
             <span>Privacy</span>
-            <span>Status</span>
+            <span>Status</span> */}
           </div>
         </footer>
       </div>
