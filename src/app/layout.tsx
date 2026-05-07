@@ -30,6 +30,9 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "Flux - File Sharing",
   description: "Let your files flow.",
+  icons: {
+    icon: "/flux-logo.png",
+  },
 };
 
 export default function RootLayout({

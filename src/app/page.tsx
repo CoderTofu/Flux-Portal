@@ -60,7 +60,7 @@ export default function Home() {
   const copyLink = async () => {
     try {
       await navigator.clipboard.writeText(generatedShareLink);
-      console.log("Link copied!");
+      alert("Link copied to clipboard!");
     } catch (err) {
       console.error("Failed to copy:", err);
     }
@@ -84,6 +84,7 @@ export default function Home() {
     setIsUploading(true);
     const id = nanoid(11);
     setGeneratedShareLink(`${window.location.origin}/${id}`);
+
     selectedFiles.map(async (file: File) => {
       const response = await fetch(`http://localhost:5000/get-upload-link`, {
         method: "POST",
@@ -95,6 +96,7 @@ export default function Home() {
           contentType: file.type,
         }),
       });
+      
       const { url } = await response.json();
       const uploadResponse = await fetch(url, {
         method: "PUT",
