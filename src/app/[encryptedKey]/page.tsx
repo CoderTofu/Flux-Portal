@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import JSZip from "jszip";
 import { useParams } from "next/navigation";
 import { useRef, useState, useEffect } from "react";
 
@@ -69,6 +70,33 @@ export default function DownloadPage() {
     window.URL.revokeObjectURL(blobUrl);
   };
 
+  const handleMultiDownload = async (items: any[]) => {
+    const zip = new JSZip();
+
+    await Promise.all(
+      items.map(async (file) => {
+        const response = await fetch(file.url);
+        const blob = await response.blob();
+
+        zip.file(file.Key, blob);
+      })
+    );
+
+    const zipBlob = await zip.generateAsync({ type: "blob" });
+
+    const blobUrl = window.URL.createObjectURL(zipBlob);
+
+    const a = document.createElement("a");
+    a.href = blobUrl;
+    a.download = "flux-downloads.zip";
+
+    document.body.appendChild(a);
+    a.click();
+
+    a.remove();
+    window.URL.revokeObjectURL(blobUrl);
+  };
+
   const [data, setData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -94,6 +122,10 @@ export default function DownloadPage() {
     fetchFiles();
   }, []);
 
+  // useEffect(() => {
+  //   console.log("(debug) data: ", data)
+  // }, [data])
+
   return (
     <main className="text-[#1d1326]">
       <div className="mx-auto flex min-h-screen max-w-[1320px] flex-col px-6 pb-5 pt-4 lg:px-10">
@@ -114,9 +146,17 @@ export default function DownloadPage() {
             </div>
           ) : (
             !data || data.items.length === 0 ? (
-              <div className="mt-10 grid gap-8 transition-all duration-300 lg:grid-cols-[1.3fr_1fr]">
-                <div className={`min-h-[350px] rounded-2xl border-2 bg-white/70 px-5 py-6 text-left shadow-[0_6px_16px_rgba(60,33,88,0.08)] transition border-[#c4b8cf]`}>
-                  <p className="mt-3 text-base text-[#4A306D] md:text-[20px] md:leading-8">
+              <div className="mt-10 flex flex-1 items-center justify-center">
+                <div className="flex min-h-[450px] w-full flex-col items-center justify-center rounded-2xl border-2 border-[#c4b8cf] bg-white/70 px-5 py-10 text-center shadow-[0_6px_16px_rgba(60,33,88,0.08)]">
+                  <Image
+                    src="/no-file.png"
+                    alt="No files"
+                    width={180}
+                    height={180}
+                    className="mb-6 opacity-90"
+                  />
+
+                  <p className="text-base text-[#4A306D] md:text-[20px] md:leading-8">
                     No files found or link expired.
                   </p>
                 </div>
@@ -170,6 +210,7 @@ export default function DownloadPage() {
                     <button
                       type="button"
                       // onClick={() => handleFileDownload(data.items[0].url, data.items[0].Key)}
+                      onClick={() => {handleMultiDownload(data.items)}}
                       className="select-none group flex flex-row gap-2 text-xs text-center items-center font-bold uppercase tracking-wide text-[#8f4aba] border-2 border-[#8f4aba] rounded-lg p-2 px-10 transition hover:text-white hover:bg-[#8f4aba] disabled:cursor-not-allowed "
                     >
                       <Image
