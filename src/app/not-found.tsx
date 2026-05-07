@@ -129,7 +129,7 @@ export default function DownloadPage() {
   }, []);
 
   useEffect(() => {
-    if (!expirationHours) return;
+    if (expirationHours === undefined) return;
     if (expirationHours > 0) {
       setTimeout(() => {
         setExpirationHours((prev) => prev! - 1);
