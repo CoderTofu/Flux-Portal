@@ -89,7 +89,7 @@ export default function DownloadPage() {
 
     const a = document.createElement("a");
     a.href = blobUrl;
-    a.download = "flux-downloads.zip";
+    a.download = `flux-downloads-${fileKey}.zip`;
 
     document.body.appendChild(a);
     a.click();
