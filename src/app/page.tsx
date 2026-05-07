@@ -86,17 +86,20 @@ export default function Home() {
     setGeneratedShareLink(`${window.location.origin}/${id}`);
 
     selectedFiles.map(async (file: File) => {
-      const response = await fetch(`http://localhost:5000/get-upload-link`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id,
-          filename: file.name,
-          expirationHours,
-          contentType: file.type,
-        }),
-      });
-      
+      const response = await fetch(
+        `https://n4kefqn10k.execute-api.ap-southeast-1.amazonaws.com/dev/get-upload-link`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id,
+            filename: file.name,
+            expirationHours,
+            contentType: file.type,
+          }),
+        },
+      );
+
       const { url } = await response.json();
       const uploadResponse = await fetch(url, {
         method: "PUT",
@@ -149,10 +152,11 @@ export default function Home() {
                 }}
                 onDragLeave={() => setIsDragging(false)}
                 onDrop={handleDrop}
-                className={`flex min-h-[350px] flex-col items-center justify-center rounded-2xl border-2 border-dashed bg-white/70 px-5 text-center shadow-[0_6px_16px_rgba(60,33,88,0.08)] transition ${isDragging
-                  ? "border-[#9f59cc] bg-[#f8f1fe]"
-                  : "border-[#c4b8cf]"
-                  }`}
+                className={`flex min-h-[350px] flex-col items-center justify-center rounded-2xl border-2 border-dashed bg-white/70 px-5 text-center shadow-[0_6px_16px_rgba(60,33,88,0.08)] transition ${
+                  isDragging
+                    ? "border-[#9f59cc] bg-[#f8f1fe]"
+                    : "border-[#c4b8cf]"
+                }`}
               >
                 <div className="flex h-full flex-col items-center justify-center text-center">
                   <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-[#f4eafb]">
@@ -240,10 +244,11 @@ export default function Home() {
                 }}
                 onDragLeave={() => setIsDragging(false)}
                 onDrop={handleDrop}
-                className={`min-h-[350px] rounded-2xl border-2 border-dashed bg-white/70 px-5 py-6 text-left shadow-[0_6px_16px_rgba(60,33,88,0.08)] transition ${isDragging
-                  ? "border-[#9f59cc] bg-[#f8f1fe]"
-                  : "border-[#c4b8cf]"
-                  }`}
+                className={`min-h-[350px] rounded-2xl border-2 border-dashed bg-white/70 px-5 py-6 text-left shadow-[0_6px_16px_rgba(60,33,88,0.08)] transition ${
+                  isDragging
+                    ? "border-[#9f59cc] bg-[#f8f1fe]"
+                    : "border-[#c4b8cf]"
+                }`}
               >
                 <div className="space-y-4 overflow-y-auto h-100">
                   {selectedFiles.map((file, index) => (
@@ -336,11 +341,9 @@ export default function Home() {
                       onClick={handleStartUpload}
                       className="mt-5 w-full rounded-lg bg-[#8f4aba] px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-[#7f3caa] disabled:cursor-not-allowed disabled:bg-[#c9b8d6]"
                     >
-                      {isUploading
-                        ? "Uploading..."
-                        : "Upload"}
+                      {isUploading ? "Uploading..." : "Upload"}
                     </button>
-                  )} 
+                  )}
                 </article>
 
                 {isUploaded && (
