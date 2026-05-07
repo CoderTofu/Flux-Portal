@@ -41,7 +41,19 @@ export default function DownloadPage() {
     return "File";
   }
 
-  const [expirationHours, setExpirationHours] = useState(24);
+  function formatExpiration(seconds: number) {
+    const hours = Math.floor(seconds / 3600);
+    if (hours > 0) {
+      return `${hours} hours`;
+    }
+    const minutes = Math.floor((seconds % 3600) / 60);
+    if (minutes > 0) return `${minutes} minutes`;
+    return `${seconds % 60} seconds`;
+  }
+
+  const [expirationHours, setExpirationHours] = useState<number | undefined>(
+    undefined,
+  );
 
   const handleFileDownload = async (url: string, filename: string) => {
     const res = await fetch(url);
@@ -105,6 +117,7 @@ export default function DownloadPage() {
         const json: ApiResponse = await response.json();
 
         setData(json);
+        setExpirationHours(json.remaining_seconds);
       } catch (error) {
         console.error(error);
       } finally {
@@ -114,6 +127,18 @@ export default function DownloadPage() {
 
     fetchFiles();
   }, []);
+
+  useEffect(() => {
+    if (!expirationHours) return;
+    if (expirationHours > 0) {
+      setTimeout(() => {
+        setExpirationHours((prev) => prev! - 1);
+      }, 1000);
+    } else {
+      location.reload();
+    }
+  }, [expirationHours]);
+
   return (
     <main className="text-[#1d1326]">
       <div className="mx-auto flex min-h-screen max-w-[1320px] flex-col px-6 pb-5 pt-4 lg:px-10">
@@ -193,7 +218,7 @@ export default function DownloadPage() {
                 <article className="px-10 flex flex-row justify-between items-center h-min rounded-2xl border border-[#d9d0e1] bg-white/90 p-5 shadow-[0_8px_20px_rgba(60,33,88,0.12)]">
                   <p className="h-full text-left mt-2 text-sm leading-6 text-[#6a5a79]">
                     Found {data.items.length} file(s). <br />
-                    Expiring in {expirationHours} hours.
+                    Expiring in {formatExpiration(expirationHours!)}.
                   </p>
                   <button
                     type="button"
