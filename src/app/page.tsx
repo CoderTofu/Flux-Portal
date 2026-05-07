@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { nanoid } from "nanoid";
-
+import CopyModal from "@/components/copy-modal";
 const MAX_SIZE_TEXT = "Maximum file size 2GB";
 const trustItems = [
   {
@@ -54,13 +54,13 @@ export default function Home() {
   const [isUploaded, setIsUploaded] = useState(false);
   const [isFileSelectionLocked, setIsFileSelectionLocked] = useState(false);
   const [generatedShareLink, setGeneratedShareLink] = useState("");
-
+  const [isCopyModalOpen, setIsCopyModalOpen] = useState(false);
   const hasFiles = selectedFiles.length > 0;
 
   const copyLink = async () => {
     try {
       await navigator.clipboard.writeText(generatedShareLink);
-      alert("Link copied to clipboard!");
+      setIsCopyModalOpen(true);
     } catch (err) {
       console.error("Failed to copy:", err);
     }
@@ -124,6 +124,10 @@ export default function Home() {
   return (
     <main className="text-[#1d1326]">
       <div className="mx-auto flex min-h-screen max-w-[1320px] flex-col px-6 pb-5 pt-4 lg:px-10">
+        <CopyModal
+          isOpen={isCopyModalOpen}
+          onClose={() => setIsCopyModalOpen(false)}
+        />
         <section className="relative flex-1 py-6 text-center lg:px-10 lg:py-10">
           <h1 className="font-playfair text-4xl text-[#23172f] md:text-6xl">
             Let your files <span className="text-[#8253a7]">flow.</span>
