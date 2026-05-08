@@ -1,10 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { nanoid } from "nanoid";
-import CopyModal from "@/components/copy-modal";
-const MAX_SIZE_TEXT = "Maximum file size 2GB";
+import Toast from "@/components/toast";
+const MAX_SIZE_TEXT = "Maximum total file size: 1GB";
+const MAX_SIZE_TEXT_ERROR = "Total file size exceeds 1GB limit";
 const trustItems = [
   {
     title: "Instant Share",
@@ -54,15 +55,23 @@ export default function Home() {
   const [isUploaded, setIsUploaded] = useState(false);
   const [isFileSelectionLocked, setIsFileSelectionLocked] = useState(false);
   const [generatedShareLink, setGeneratedShareLink] = useState("");
-  const [isCopyModalOpen, setIsCopyModalOpen] = useState(false);
+  const [isToastOpen, setIsToastOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error" | undefined>(
+    undefined,
+  );
   const hasFiles = selectedFiles.length > 0;
 
   const copyLink = async () => {
     try {
       await navigator.clipboard.writeText(generatedShareLink);
-      setIsCopyModalOpen(true);
+      setToastMessage("Link copied!");
+      setToastType("success");
+      setIsToastOpen(true);
     } catch (err) {
-      console.error("Failed to copy:", err);
+      setToastMessage("Failed to copy: " + err);
+      setToastType("error");
+      setIsToastOpen(true);
     }
   };
 
@@ -70,6 +79,20 @@ export default function Home() {
     if (!files || isFileSelectionLocked) return;
     const incoming = Array.from(files);
     if (!incoming.length) return;
+    const oneGB = 1024 ** 2 * 100;
+    const currentTotal = selectedFiles.reduce(
+      (sum, file) => sum + file.size,
+      0,
+    );
+    const incomingTotal = incoming.reduce((sum, file) => sum + file.size, 0);
+    const total = currentTotal + incomingTotal;
+
+    if (total > oneGB) {
+      setToastMessage(MAX_SIZE_TEXT_ERROR);
+      setToastType("error");
+      setIsToastOpen(true);
+      return;
+    }
     setSelectedFiles((prev) => [...prev, ...incoming]);
   };
 
@@ -124,9 +147,11 @@ export default function Home() {
   return (
     <main className="text-[#1d1326]">
       <div className="mx-auto flex min-h-screen max-w-[1320px] flex-col px-6 pb-5 pt-4 lg:px-10">
-        <CopyModal
-          isOpen={isCopyModalOpen}
-          onClose={() => setIsCopyModalOpen(false)}
+        <Toast
+          text={toastMessage}
+          type={toastType!}
+          isOpen={isToastOpen}
+          onClose={() => setIsToastOpen(false)}
         />
         <section className="relative flex-1 py-6 text-center lg:px-10 lg:py-10">
           <h1 className="font-playfair text-4xl text-[#23172f] md:text-6xl">
