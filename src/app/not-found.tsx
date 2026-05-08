@@ -117,7 +117,9 @@ export default function DownloadPage() {
         const json: ApiResponse = await response.json();
 
         setData(json);
-        setExpirationHours(json.remaining_seconds);
+        if (json.remaining_seconds > 0)
+          setExpirationHours(json.remaining_seconds);
+        else setExpirationHours(undefined);
       } catch (error) {
         console.error(error);
       } finally {
