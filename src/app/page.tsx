@@ -10,7 +10,7 @@ const trustItems = [
   {
     title: "Instant Share",
     description:
-      "Files are encrypted before they even leave your device. Share anything up to 2GB instantly with a simple link.",
+      "Files are encrypted before they even leave your device. Share anything up to 1GB instantly with a simple link.",
     bullets: [
       { icon: "/encrypted-logo.png", label: "End-to-end Encrypted" },
       { icon: "/p2p-logo.png", label: "P2P Transfers available" },
