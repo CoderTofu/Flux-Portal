@@ -79,7 +79,7 @@ export default function Home() {
     if (!files || isFileSelectionLocked) return;
     const incoming = Array.from(files);
     if (!incoming.length) return;
-    const oneGB = 1024 ** 2 * 100;
+    const oneGB = 1024 ** 3;
     const currentTotal = selectedFiles.reduce(
       (sum, file) => sum + file.size,
       0,
