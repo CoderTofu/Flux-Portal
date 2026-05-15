@@ -177,21 +177,19 @@ export default function DownloadPage() {
             </div>
           ) : (
             <div className="mt-10 grid gap-8 transition-all duration-300 lg:grid-cols-[1.3fr_1fr]">
-              <div
-                className={`min-h-[350px] rounded-2xl border-2 bg-white/70 px-5 py-6 text-left shadow-[0_6px_16px_rgba(60,33,88,0.08)] transition border-[#c4b8cf]`}
-              >
-                <div className="space-y-4 overflow-y-auto h-100">
+              <div className="min-h-[350px] overflow-x-hidden rounded-2xl border-2 border-[#c4b8cf] bg-white/70 px-5 py-6 text-left shadow-[0_6px_16px_rgba(60,33,88,0.08)] transition">
+                <div className="h-100 space-y-4 overflow-y-auto overflow-x-hidden">
                   {data.items.map((file) => (
                     <div
                       key={`${file.Key}-${file.Size}`}
-                      className="flex items-start justify-between gap-4 rounded-xl border border-[#ded4e8] bg-white px-4 py-3"
+                      className="flex min-w-0 flex-col gap-3 rounded-xl border border-[#ded4e8] bg-white px-4 py-3 sm:flex-row sm:items-start sm:justify-between"
                     >
-                      <div className="flex items-start gap-3">
-                        <div>
-                          <p className="text-sm font-medium text-[#3a2748]">
+                      <div className="flex min-w-0 items-start gap-3">
+                        <div className="min-w-0">
+                          <p className="max-w-full truncate text-sm font-medium text-[#3a2748]">
                             {file.Key}
                           </p>
-                          <p className="text-xs uppercase tracking-wide text-[#7e6d8d]">
+                          <p className="break-words text-xs uppercase tracking-wide text-[#7e6d8d]">
                             {getFileTypeLabel(file)} •{" "}
                             {formatBytes(file.Size)}{" "}
                           </p>
@@ -201,7 +199,7 @@ export default function DownloadPage() {
                       <button
                         type="button"
                         onClick={() => handleFileDownload(file.url, file.Key)}
-                        className="group mt-0.5 text-xs font-semibold uppercase tracking-wide text-[#8e4eba] border-2 border-[#8e4eba] p-2 rounded-2xl transition hover:text-[#7c39ab] hover:bg-[#7c39ab] disabled:cursor-not-allowed "
+                        className="group mt-0.5 self-start rounded-2xl border-2 border-[#8e4eba] p-2 text-xs font-semibold uppercase tracking-wide text-[#8e4eba] transition hover:bg-[#7c39ab] hover:text-[#7c39ab] disabled:cursor-not-allowed sm:self-auto"
                       >
                         <Image
                           src="/download-logo.png"
@@ -217,18 +215,22 @@ export default function DownloadPage() {
               </div>
 
               <div className="flex flex-col gap-5">
-                <article className="px-10 flex flex-row justify-between items-center h-min rounded-2xl border border-[#d9d0e1] bg-white/90 p-5 shadow-[0_8px_20px_rgba(60,33,88,0.12)]">
-                  <p className="h-full text-left mt-2 text-sm leading-6 text-[#6a5a79]">
-                    Found {data.items.length} file(s). <br />
-                    Expiring in {formatExpiration(expirationHours!)}.
-                  </p>
+                <article className="flex h-min w-full flex-col justify-between gap-4 overflow-x-hidden rounded-2xl border border-[#d9d0e1] bg-white/90 p-5 shadow-[0_8px_20px_rgba(60,33,88,0.12)] sm:flex-row sm:items-center sm:px-10">
+                  <div className="flex w-full min-w-0 flex-col">
+                    <p className="h-full w-full text-left text-sm leading-6 text-[#6a5a79]">
+                      Found {data.items.length} file(s).
+                    </p>
+                    <p className="h-full w-full text-left text-sm leading-6 text-[#6a5a79]">
+                      Expiring in {formatExpiration(expirationHours!)}.
+                    </p>
+                  </div>
                   <button
                     type="button"
                     // onClick={() => handleFileDownload(data.items[0].url, data.items[0].Key)}
                     onClick={() => {
                       handleMultiDownload(data.items);
                     }}
-                    className="select-none group flex flex-row gap-2 text-xs text-center items-center font-bold uppercase tracking-wide text-[#8f4aba] border-2 border-[#8f4aba] rounded-lg p-2 px-10 transition hover:text-white hover:bg-[#8f4aba] disabled:cursor-not-allowed "
+                    className="group flex w-full select-none flex-row items-center justify-center gap-2 rounded-lg border-2 border-[#8f4aba] p-2 px-6 text-center text-xs font-bold uppercase tracking-wide text-[#8f4aba] transition hover:bg-[#8f4aba] hover:text-white disabled:cursor-not-allowed sm:mt-0 sm:w-auto sm:px-10"
                   >
                     <Image
                       src="/download-logo.png"

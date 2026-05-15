@@ -273,20 +273,20 @@ export default function Home() {
                 }}
                 onDragLeave={() => setIsDragging(false)}
                 onDrop={handleDrop}
-                className={`min-h-[350px] rounded-2xl border-2 border-dashed bg-white/70 px-5 py-6 text-left shadow-[0_6px_16px_rgba(60,33,88,0.08)] transition ${
+                className={`min-h-[350px] overflow-x-hidden rounded-2xl border-2 border-dashed bg-white/70 px-5 py-6 text-left shadow-[0_6px_16px_rgba(60,33,88,0.08)] transition ${
                   isDragging
                     ? "border-[#9f59cc] bg-[#f8f1fe]"
                     : "border-[#c4b8cf]"
                 }`}
               >
-                <div className="space-y-4 overflow-y-auto h-100">
+                <div className="h-100 space-y-4 overflow-y-auto overflow-x-hidden">
                   {selectedFiles.map((file, index) => (
                     <div
                       key={`${file.name}-${file.size}-${index}`}
-                      className="flex items-start justify-between gap-4 rounded-xl border border-[#ded4e8] bg-white px-4 py-3"
+                      className="flex min-w-0 flex-col gap-3 rounded-xl border border-[#ded4e8] bg-white px-4 py-3 sm:flex-row sm:items-start sm:justify-between"
                     >
-                      <div className="flex items-start gap-3">
-                        <span className="mt-1 rounded-md bg-[#f3e8fb] p-2">
+                      <div className="flex min-w-0 items-start gap-3">
+                        <span className="mt-1 shrink-0 rounded-md bg-[#f3e8fb] p-2">
                           <Image
                             src="/upload-logo.png"
                             alt=""
@@ -295,11 +295,11 @@ export default function Home() {
                             className="h-3 w-3"
                           />
                         </span>
-                        <div>
-                          <p className="text-sm font-medium text-[#3a2748]">
+                        <div className="min-w-0">
+                          <p className="max-w-full truncate text-sm font-medium text-[#3a2748]">
                             {file.name}
                           </p>
-                          <p className="text-xs uppercase tracking-wide text-[#7e6d8d]">
+                          <p className="break-words text-xs uppercase tracking-wide text-[#7e6d8d]">
                             {getFileTypeLabel(file)} •{" "}
                             {formatBytes(file.size)}{" "}
                           </p>
@@ -311,7 +311,7 @@ export default function Home() {
                         <button
                           type="button"
                           onClick={() => handleRemoveFile(index)}
-                          className="mt-0.5 text-xs font-semibold uppercase tracking-wide text-[#8e4eba] transition hover:text-[#7c39ab] disabled:cursor-not-allowed "
+                          className="mt-0.5 self-start text-xs font-semibold uppercase tracking-wide text-[#8e4eba] transition hover:text-[#7c39ab] disabled:cursor-not-allowed sm:self-auto"
                         >
                           Remove
                         </button>
